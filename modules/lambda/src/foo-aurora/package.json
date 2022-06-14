@@ -1,0 +1,11 @@
+{
+  "name": "back-end",
+  "version": "1.0.0",
+  "main": "foo-dynamo.js",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.105.0",
+    "aws-sdk": "^2.1152.0",
+    "pg": "^8.7.3"
+  }
+}

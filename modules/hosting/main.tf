@@ -13,6 +13,9 @@ resource "aws_s3_bucket" "s3_hosting" {
     prevent_destroy = false
   }
 
+  # Terraform wont delete an S3 bucket with contents unless you force_destroy
+  force_destroy = true
+
   tags = {
     Name = "Serverless Terraform Hosting"
   }

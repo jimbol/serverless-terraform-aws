@@ -22,7 +22,7 @@ terraform {
 locals {
   create_in_backend = terraform.workspace == "backend" ? 1 : 0
   create_in_other_envs = terraform.workspace != "backend" ? 1 : 0
-  lambdas = ["foo", "bar"]
+  lambdas = ["foo", "bar", /*"foo-dynamo",*/ "foo-aurora"]
 }
 
 # Providers
@@ -50,11 +50,19 @@ module "hosting" {
   domain = "serverlessterraform.com"
 }
 
+module "dynamodb" {
+  count  = local.create_in_other_envs
+  source = "./modules/dynamo-db"
+  env    = var.env
+}
+
 module "lambda" {
   count  = local.create_in_other_envs
   source = "./modules/lambda"
   env    = var.env
   lambdas = local.lambdas
+  dynamo_table_arn = module.dynamodb[0].dynamo_table_arn
+  aurora_arn = module.aurora-db[0].aurora_arn
 }
 
 module "api-gateway" {
@@ -62,6 +70,22 @@ module "api-gateway" {
   source = "./modules/api-gateway"
   env    = var.env
   lambdas = module.lambda[0].lambdas
+}
+
+module "aurora-db" {
+  count  = local.create_in_other_envs
+  source = "./modules/aurora-db"
+  env    = var.env
+  vpc_id = module.vpc[0].vpc_id
+  database_subnets = module.vpc[0].subnets
+  private_subnets_cidr_blocks = module.vpc[0].private_subnets_cidr_blocks
+}
+
+
+module "step-functions" {
+  count  = local.create_in_other_envs
+  source = "./modules/step-functions"
+  env    = var.env
 }
 
 

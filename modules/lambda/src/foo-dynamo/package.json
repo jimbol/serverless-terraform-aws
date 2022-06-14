@@ -1,0 +1,9 @@
+{
+  "name": "back-end",
+  "version": "1.0.0",
+  "main": "foo-dynamo.js",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.1152.0"
+  }
+}
